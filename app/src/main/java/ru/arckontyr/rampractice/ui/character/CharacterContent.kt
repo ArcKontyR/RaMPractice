@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import ru.arckontyr.rampractice.data.model.Character
+import ru.arckontyr.rampractice.domain.model.Character
 
 @Composable
 fun CharacterContent(

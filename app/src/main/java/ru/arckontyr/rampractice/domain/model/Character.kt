@@ -1,4 +1,4 @@
-package ru.arckontyr.rampractice.data.model
+package ru.arckontyr.rampractice.domain.model
 
 import ru.arckontyr.rampractice.data.enums.Gender
 import ru.arckontyr.rampractice.data.enums.Status

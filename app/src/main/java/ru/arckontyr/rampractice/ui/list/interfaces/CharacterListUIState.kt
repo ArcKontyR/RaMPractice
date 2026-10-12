@@ -1,6 +1,6 @@
 package ru.arckontyr.rampractice.ui.list.interfaces
 
-import ru.arckontyr.rampractice.data.model.Character
+import ru.arckontyr.rampractice.domain.model.Character
 
 sealed interface CharacterListUIState {
     data object Loading : CharacterListUIState

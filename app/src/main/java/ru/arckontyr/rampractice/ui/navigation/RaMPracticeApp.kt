@@ -20,8 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import ru.arckontyr.rampractice.ui.character.CharacterScreen
+import ru.arckontyr.rampractice.ui.character.CharacterViewModel
 import ru.arckontyr.rampractice.ui.list.CharacterListScreen
+import ru.arckontyr.rampractice.ui.list.CharacterListViewModel
 import ru.arckontyr.rampractice.ui.navigation.enums.AppDestinations
 
 @PreviewScreenSizes
@@ -63,9 +67,11 @@ fun RaMPracticeApp() {
             startDestination = AppDestinations.CHARACTERS.route,
         ) {
             composable(AppDestinations.CHARACTERS.route) {
-                CharacterListScreen(onCharacterClick = { id ->
-                    navController.navigate(Routes.getCharacterByID(id))
-                })
+                CharacterListScreen(
+                    onCharacterClick = { id ->
+                        navController.navigate(Routes.getCharacterByID(id))
+                    },
+                    viewModel = koinViewModel<CharacterListViewModel>())
             }
 
             composable(AppDestinations.FAVORITES.route) {
@@ -92,9 +98,12 @@ fun RaMPracticeApp() {
                     navArgument(Routes.ID) { type = NavType.IntType }
                 )
             ) {
-                CharacterScreen(onBack = {
-                    navController.popBackStack()
-                })
+                CharacterScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    viewModel = koinViewModel<CharacterViewModel>()
+                )
             }
         }
     }
