@@ -9,6 +9,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
@@ -31,34 +32,39 @@ import ru.arckontyr.rampractice.ui.navigation.enums.AppDestinations
 @PreviewScreenSizes
 @Composable
 fun RaMPracticeApp() {
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.CHARACTERS) }
     val navController = rememberNavController()
     val currentRoute by navController.currentBackStackEntryAsState()
+
+    val topLevelRoutes = remember { AppDestinations.entries.map { it.route }.toSet() }
     val route = currentRoute?.destination?.route
+    val isTopLevel = route in topLevelRoutes
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            AppDestinations.entries.forEach { destination ->
-                item(
-                    icon = {
-                        Icon(
-                            painterResource(destination.icon),
-                            contentDescription = destination.label
-                        )
-                    },
-                    label = { Text(destination.label) },
-                    selected = destination == currentDestination,
-                    onClick = { currentDestination = destination
-                        if (route != destination.route) {
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+            if (isTopLevel) {
+                AppDestinations.entries.forEach { destination ->
+                    item(
+                        icon = {
+                            Icon(
+                                painterResource(destination.icon),
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text(destination.label) },
+                        selected = route == destination.route,
+                        onClick = {
+                            if (route != destination.route) {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = false
                                 }
-                                launchSingleTop = true
-                                restoreState = false
                             }
-                        }}
-                )
+                        }
+                    )
+                }
             }
         }
     ) {

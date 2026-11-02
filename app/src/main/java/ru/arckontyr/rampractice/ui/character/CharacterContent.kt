@@ -55,9 +55,9 @@ fun CharacterContent(
         )
 
         Column(Modifier.padding(8.dp).fillMaxWidth()) {
-            InfoRow("Статус", character.status.name)
+            InfoRow("Статус", character.status.state)
             InfoRow("Вид", character.species)
-            InfoRow("Пол", character.gender.name)
+            InfoRow("Пол", character.gender.state)
             InfoRow("Происхождение", character.origin.name)
             InfoRow("Локация", character.location.name)
         }

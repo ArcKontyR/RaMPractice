@@ -4,6 +4,7 @@ import ru.arckontyr.rampractice.data.enums.Gender
 import ru.arckontyr.rampractice.data.enums.Status
 import ru.arckontyr.rampractice.domain.model.Character
 import ru.arckontyr.rampractice.data.remote.dto.CharacterDTO
+import ru.arckontyr.rampractice.ui.list.CharacterCard
 
 fun CharacterDTO.toDomain(): Character = Character(
     id = id,

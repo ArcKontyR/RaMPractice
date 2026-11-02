@@ -24,7 +24,7 @@ import ru.arckontyr.rampractice.domain.model.Character
 
 @Composable
 fun CharacterCardView(
-    character: Character,
+    character: CharacterCard,
     onClick: () -> Unit
 ) {
     Card(
@@ -55,7 +55,7 @@ fun CharacterCardView(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "${character.species} / ${character.status}",
+                    text = character.subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

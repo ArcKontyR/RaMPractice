@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.arckontyr.rampractice.domain.model.Character
 import ru.arckontyr.rampractice.domain.usecases.GetCharactersUseCase
 import ru.arckontyr.rampractice.ui.list.interfaces.CharacterListUIState
 
@@ -24,6 +25,7 @@ class CharacterListViewModel(
         viewModelScope.launch {
             _uiState.value = CharacterListUIState.Loading
             getCharacters()
+                .map{chars -> chars.map{ it.toUi() } }
                 .onSuccess {
                     _uiState.value = CharacterListUIState.Success(it)
                 }
@@ -35,3 +37,11 @@ class CharacterListViewModel(
         }
     }
 }
+
+private fun Character.toUi(): CharacterCard = CharacterCard(
+    id = id,
+    name = name,
+    subtitle = "$species / ${status.state}",
+    location = location,
+    imageUrl = imageUrl
+)
