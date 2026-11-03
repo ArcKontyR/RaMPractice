@@ -2,9 +2,7 @@ package ru.arckontyr.rampractice.ui.list
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,11 +23,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.StateFlow
-import ru.arckontyr.rampractice.ui.filters.FilterBadgeCache
+import kotlinx.coroutines.flow.toList
 import ru.arckontyr.rampractice.ui.list.interfaces.CharacterListUIState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,10 +33,11 @@ import ru.arckontyr.rampractice.ui.list.interfaces.CharacterListUIState
 fun CharacterListScreen(
     onCharacterClick: (Int) -> Unit,
     onOpenFilters: () -> Unit,
-    viewModel: CharacterListViewModel = viewModel(),
+    viewModel: CharacterListViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val showBadge by viewModel.showBadge.collectAsState()
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
 
     Scaffold(
         topBar = {
@@ -81,7 +78,10 @@ fun CharacterListScreen(
                         items(state.characters, key = { it.id }) { character ->
                             CharacterCardView(
                                 character = character,
-                                onClick = { onCharacterClick(character.id) }
+                                subtitle = "${character.species} / ${character.status.state}",
+                                isFavorite = character.id in favoriteIds,
+                                onClick = { onCharacterClick(character.id) },
+                                onFavoriteClick = { viewModel.onFavoriteClick(character) }
                             )
                         }
                     }

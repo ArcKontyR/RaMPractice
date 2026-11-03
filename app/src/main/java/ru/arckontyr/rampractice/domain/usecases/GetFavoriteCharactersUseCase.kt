@@ -1,11 +1,9 @@
 package ru.arckontyr.rampractice.domain.usecases
 
-import ru.arckontyr.rampractice.data.repository.CharacterRepository
-import ru.arckontyr.rampractice.domain.extensions.runSuspendCatching
+import kotlinx.coroutines.flow.Flow
+import ru.arckontyr.rampractice.data.repository.FavoriteCharactersRepository
 import ru.arckontyr.rampractice.domain.model.Character
-import ru.arckontyr.rampractice.domain.model.filters.CharacterFilter
 
-class GetFavoriteCharactersUseCase(private val repository: CharacterRepository) {
-    suspend operator fun invoke(filter: CharacterFilter): Result<List<Character>> =
-        runSuspendCatching { repository.getCharacters(filter) }
+class GetFavoriteCharactersUseCase(private val repo: FavoriteCharactersRepository) {
+    operator fun invoke(): Flow<List<Character>> = repo.favorites
 }

@@ -25,6 +25,8 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.arckontyr.rampractice.ui.character.CharacterScreen
 import ru.arckontyr.rampractice.ui.character.CharacterViewModel
+import ru.arckontyr.rampractice.ui.favorite.FavoriteListScreen
+import ru.arckontyr.rampractice.ui.favorite.FavoriteListViewModel
 import ru.arckontyr.rampractice.ui.filters.FilterScreen
 import ru.arckontyr.rampractice.ui.list.CharacterListScreen
 import ru.arckontyr.rampractice.ui.list.CharacterListViewModel
@@ -79,16 +81,16 @@ fun RaMPracticeApp() {
                         navController.navigate(Routes.getCharacterByID(id))
                     },
                     onOpenFilters = { navController.navigate(Routes.FILTER) },
-                    viewModel = koinViewModel<CharacterListViewModel>())
+                    viewModel = koinViewModel<CharacterListViewModel>()
+                )
             }
 
             composable(AppDestinations.FAVORITES.route) {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Text(
-                        text = "Hi, you on FAVOURITES",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                FavoriteListScreen(
+                    onCharacterClick = { id ->
+                        navController.navigate(Routes.getCharacterByID(id))
+                    },
+                    viewModel = koinViewModel<FavoriteListViewModel>())
             }
 
             composable(AppDestinations.PROFILE.route) {

@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.arckontyr.rampractice.domain.model.Character
+import ru.arckontyr.rampractice.domain.usecases.AddFavoriteUseCase
 import ru.arckontyr.rampractice.domain.usecases.GetCharactersByIDUseCase
 import ru.arckontyr.rampractice.ui.character.interfaces.CharacterUIState
-import ru.arckontyr.rampractice.ui.list.interfaces.CharacterListUIState
 import ru.arckontyr.rampractice.ui.navigation.Routes
 
 class CharacterViewModel(
@@ -18,10 +19,8 @@ class CharacterViewModel(
 ) : ViewModel() {
 
     private val characterId: Int = checkNotNull(savedStateHandle[Routes.ID])
-
     private val _uiState = MutableStateFlow<CharacterUIState>(CharacterUIState.Loading)
     val uiState: StateFlow<CharacterUIState> = _uiState.asStateFlow()
-
     init {
         loadCharacter()
     }
