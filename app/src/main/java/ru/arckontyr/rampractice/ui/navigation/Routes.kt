@@ -4,6 +4,7 @@ object Routes {
     const val CHARACTERS = "characters"
     const val FAVORITES = "favorites"
     const val PROFILE = "profile"
+    const val FILTER = "filter"
 
     const val CHARACTER = "character/{id}"
 

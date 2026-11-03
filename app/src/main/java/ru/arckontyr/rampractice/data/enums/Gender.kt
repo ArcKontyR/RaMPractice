@@ -4,7 +4,7 @@ enum class Gender(val state: String) {
     MALE("Male"),
     FEMALE("Female"),
     GENDERLESS("Genderless"),
-    UNKNOWN("unknown");
+    UNKNOWN("Unknown");
 
     companion object {
         operator fun invoke(token: String): Gender {

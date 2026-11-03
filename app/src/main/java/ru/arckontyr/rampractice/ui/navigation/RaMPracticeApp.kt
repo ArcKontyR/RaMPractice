@@ -25,6 +25,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.arckontyr.rampractice.ui.character.CharacterScreen
 import ru.arckontyr.rampractice.ui.character.CharacterViewModel
+import ru.arckontyr.rampractice.ui.filters.FilterScreen
 import ru.arckontyr.rampractice.ui.list.CharacterListScreen
 import ru.arckontyr.rampractice.ui.list.CharacterListViewModel
 import ru.arckontyr.rampractice.ui.navigation.enums.AppDestinations
@@ -77,6 +78,7 @@ fun RaMPracticeApp() {
                     onCharacterClick = { id ->
                         navController.navigate(Routes.getCharacterByID(id))
                     },
+                    onOpenFilters = { navController.navigate(Routes.FILTER) },
                     viewModel = koinViewModel<CharacterListViewModel>())
             }
 
@@ -96,6 +98,13 @@ fun RaMPracticeApp() {
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
+            }
+
+            composable(Routes.FILTER) {
+                FilterScreen(
+                    onBack = { navController.popBackStack() },
+                    onDone = { navController.popBackStack() }
+                )
             }
 
             composable(
