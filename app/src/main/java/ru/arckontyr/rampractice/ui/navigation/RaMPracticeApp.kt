@@ -31,6 +31,9 @@ import ru.arckontyr.rampractice.ui.filters.FilterScreen
 import ru.arckontyr.rampractice.ui.list.CharacterListScreen
 import ru.arckontyr.rampractice.ui.list.CharacterListViewModel
 import ru.arckontyr.rampractice.ui.navigation.enums.AppDestinations
+import ru.arckontyr.rampractice.ui.profile.EditProfileScreen
+import ru.arckontyr.rampractice.ui.profile.ProfileScreen
+import ru.arckontyr.rampractice.ui.profile.ProfileViewModel
 
 @PreviewScreenSizes
 @Composable
@@ -94,12 +97,16 @@ fun RaMPracticeApp() {
             }
 
             composable(AppDestinations.PROFILE.route) {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Text(
-                        text = "Hi, you on PROFILE",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                ProfileScreen(
+                    onEdit = { navController.navigate(Routes.EDIT_PROFILE) },
+                    viewModel = koinViewModel<ProfileViewModel>())
+            }
+
+            composable(Routes.EDIT_PROFILE) {
+                EditProfileScreen(
+                    onBack = { navController.popBackStack() },
+                    onDone = { navController.popBackStack() }
+                )
             }
 
             composable(Routes.FILTER) {
