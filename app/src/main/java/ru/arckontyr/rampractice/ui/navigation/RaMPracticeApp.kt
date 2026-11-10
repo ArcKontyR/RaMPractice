@@ -1,0 +1,134 @@
+package ru.arckontyr.rampractice.ui.navigation
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
+import ru.arckontyr.rampractice.ui.character.CharacterScreen
+import ru.arckontyr.rampractice.ui.character.CharacterViewModel
+import ru.arckontyr.rampractice.ui.favorite.FavoriteListScreen
+import ru.arckontyr.rampractice.ui.favorite.FavoriteListViewModel
+import ru.arckontyr.rampractice.ui.filters.FilterScreen
+import ru.arckontyr.rampractice.ui.list.CharacterListScreen
+import ru.arckontyr.rampractice.ui.list.CharacterListViewModel
+import ru.arckontyr.rampractice.ui.navigation.enums.AppDestinations
+import ru.arckontyr.rampractice.ui.profile.EditProfileScreen
+import ru.arckontyr.rampractice.ui.profile.ProfileScreen
+import ru.arckontyr.rampractice.ui.profile.ProfileViewModel
+
+@PreviewScreenSizes
+@Composable
+fun RaMPracticeApp() {
+    val navController = rememberNavController()
+    val currentRoute by navController.currentBackStackEntryAsState()
+
+    val topLevelRoutes = remember { AppDestinations.entries.map { it.route }.toSet() }
+    val route = currentRoute?.destination?.route
+    val isTopLevel = route in topLevelRoutes
+
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            if (isTopLevel) {
+                AppDestinations.entries.forEach { destination ->
+                    item(
+                        icon = {
+                            Icon(
+                                painterResource(destination.icon),
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text(destination.label) },
+                        selected = route == destination.route,
+                        onClick = {
+                            if (route != destination.route) {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = false
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    ) {
+        NavHost(
+            navController = navController,
+            startDestination = AppDestinations.CHARACTERS.route,
+        ) {
+            composable(AppDestinations.CHARACTERS.route) {
+                CharacterListScreen(
+                    onCharacterClick = { id ->
+                        navController.navigate(Routes.getCharacterByID(id))
+                    },
+                    onOpenFilters = { navController.navigate(Routes.FILTER) },
+                    viewModel = koinViewModel<CharacterListViewModel>()
+                )
+            }
+
+            composable(AppDestinations.FAVORITES.route) {
+                FavoriteListScreen(
+                    onCharacterClick = { id ->
+                        navController.navigate(Routes.getCharacterByID(id))
+                    },
+                    viewModel = koinViewModel<FavoriteListViewModel>())
+            }
+
+            composable(AppDestinations.PROFILE.route) {
+                ProfileScreen(
+                    onEdit = { navController.navigate(Routes.EDIT_PROFILE) },
+                    viewModel = koinViewModel<ProfileViewModel>())
+            }
+
+            composable(Routes.EDIT_PROFILE) {
+                EditProfileScreen(
+                    onBack = { navController.popBackStack() },
+                    onDone = { navController.popBackStack() }
+                )
+            }
+
+            composable(Routes.FILTER) {
+                FilterScreen(
+                    onBack = { navController.popBackStack() },
+                    onDone = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = Routes.CHARACTER,
+                arguments = listOf(
+                    navArgument(Routes.ID) { type = NavType.IntType }
+                )
+            ) {
+                CharacterScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    },
+                    viewModel = koinViewModel<CharacterViewModel>()
+                )
+            }
+        }
+    }
+}
