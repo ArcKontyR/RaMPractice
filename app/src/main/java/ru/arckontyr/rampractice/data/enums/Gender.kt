@@ -1,0 +1,15 @@
+package ru.arckontyr.rampractice.data.enums
+
+enum class Gender(val state: String) {
+    MALE("Male"),
+    FEMALE("Female"),
+    GENDERLESS("Genderless"),
+    UNKNOWN("Unknown");
+
+    companion object {
+        operator fun invoke(token: String): Gender {
+            val s: Gender? = entries.find { it.name == token.trim().uppercase() }
+            return s ?: UNKNOWN
+        }
+    }
+}
