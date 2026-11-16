@@ -10,7 +10,9 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import ru.arckontyr.rampractice.data.ResumeDownloader
+import ru.arckontyr.rampractice.common.LessonReminderReceiver
+import ru.arckontyr.rampractice.common.LessonReminderScheduler
+import ru.arckontyr.rampractice.common.ResumeDownloader
 import ru.arckontyr.rampractice.data.datastore.FilterDatastore
 import ru.arckontyr.rampractice.data.datastore.ProfileDatastore
 import ru.arckontyr.rampractice.data.local.FavoriteCharactersDatabase
@@ -49,7 +51,7 @@ val characterModule = module {
     viewModel { FilterViewModel(get(), get()) }
     viewModel { FavoriteListViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
-    viewModel { EditProfileViewModel(get(), get()) }
+    viewModel { EditProfileViewModel(get(), get(),get()) }
 
     single { get<Retrofit>().create(RaMApi::class.java) }
 
@@ -65,6 +67,8 @@ val characterModule = module {
     single { FilterDatastore(androidContext()) }
     single { ProfileDatastore(androidContext()) }
     single { ResumeDownloader(androidContext()) }
+    single { LessonReminderScheduler(androidContext()) }
+    single { LessonReminderReceiver() }
 
     single { CharacterRepository(get(), get()) }
     single { FilterRepository(get()) }

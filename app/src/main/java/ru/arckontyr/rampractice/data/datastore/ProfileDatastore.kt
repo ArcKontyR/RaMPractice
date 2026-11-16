@@ -20,6 +20,7 @@ class ProfileDatastore(
         val JOB = stringPreferencesKey("p_job")
         val AVATAR = stringPreferencesKey("p_avatar")
         val RESUME = stringPreferencesKey("p_resume")
+        val LESSON_TIME = stringPreferencesKey("p_lesson")
     }
 
     val profile: Flow<Profile> = context.profileDataStore.data
@@ -29,7 +30,8 @@ class ProfileDatastore(
                 name = prefs[Keys.NAME] ?: "",
                 job = prefs[Keys.JOB] ?: "",
                 avatarUri = prefs[Keys.AVATAR] ?: "",
-                resumeUrl = prefs[Keys.RESUME] ?: ""
+                resumeUrl = prefs[Keys.RESUME] ?: "",
+                lessonTime = prefs[Keys.LESSON_TIME] ?: ""
             )
         }
 
@@ -39,6 +41,7 @@ class ProfileDatastore(
             prefs[Keys.JOB] = profile.job
             prefs[Keys.AVATAR] = profile.avatarUri
             prefs[Keys.RESUME] = profile.resumeUrl
+            prefs[Keys.LESSON_TIME] = profile.lessonTime
         }
     }
 }

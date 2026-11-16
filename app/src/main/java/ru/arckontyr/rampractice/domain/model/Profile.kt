@@ -4,7 +4,8 @@ data class Profile(
     val name: String = "",
     val job: String = "",
     val resumeUrl: String = "",
-    val avatarUri: String = ""
+    val avatarUri: String = "",
+    val lessonTime: String = ""
 ) {
     companion object {
         val Default = Profile()

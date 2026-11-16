@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -19,10 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,11 +47,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
 
@@ -60,6 +66,12 @@ fun EditProfileScreen(
     viewModel: EditProfileViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val canSave by viewModel.canSave.collectAsStateWithLifecycle()
+    val timeError by viewModel.timeError.collectAsStateWithLifecycle()
+
+    var showTimePicker by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
 
     var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
@@ -68,6 +80,12 @@ fun EditProfileScreen(
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) pendingCameraUri?.let(viewModel::onAvatarChange)
+    }
+
+    val notificationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) {
+        viewModel.onApply(onDone)
     }
 
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -182,9 +200,49 @@ fun EditProfileScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
+            OutlinedTextField(
+                value = state.lessonTime,
+                onValueChange = viewModel::onLessonTimeChange,
+                label = { Text("Время любимой пары") },
+                placeholder = { Text("HH:mm") },
+                singleLine = true,
+                isError = timeError != null,
+                supportingText = timeError?.let { { Text(it) } },
+                trailingIcon = {
+                    IconButton(onClick = { showTimePicker = true }) {
+                        Icon(Icons.Default.Schedule, contentDescription = "Выбрать время")
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (showTimePicker) {
+                TimePickerDialog(
+                    context = context,
+                    initialHour = state.lessonTime.substringBefore(":").toIntOrNull() ?: 9,
+                    initialMinute = state.lessonTime.substringAfter(":", "0").toIntOrNull() ?: 0,
+                    onDismiss = { showTimePicker = false },
+                    onConfirm = { hour, minute ->
+                        viewModel.onLessonTimeChange("%02d:%02d".format(hour, minute))
+                        showTimePicker = false
+                    }
+                )
+            }
+
 
             Button(
-                onClick = { viewModel.onApply(onDone) },
+                onClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                            viewModel.onApply(onDone)
+                        } else {
+                            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    } else
+                    {
+                        viewModel.onApply(onDone)
+                    }},
                 modifier = Modifier.fillMaxWidth()
             ) { Text("Готово") }
         }

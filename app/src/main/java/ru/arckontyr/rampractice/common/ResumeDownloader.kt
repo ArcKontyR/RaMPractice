@@ -1,4 +1,4 @@
-package ru.arckontyr.rampractice.data
+package ru.arckontyr.rampractice.common
 
 import android.app.DownloadManager
 import android.content.Context

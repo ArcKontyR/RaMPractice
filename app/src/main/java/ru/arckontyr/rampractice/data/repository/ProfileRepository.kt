@@ -1,7 +1,7 @@
 package ru.arckontyr.rampractice.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.arckontyr.rampractice.data.ResumeDownloader
+import ru.arckontyr.rampractice.common.ResumeDownloader
 import ru.arckontyr.rampractice.data.datastore.ProfileDatastore
 import ru.arckontyr.rampractice.domain.model.Profile
 
